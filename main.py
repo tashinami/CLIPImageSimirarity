@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     print("画像の読み込み...")
     images = []
-    image_dir = sorted(glob.glob(args.image_dir_path))
+    image_dir = sorted(glob.glob(os.path.join(args.image_dir_path, "*.jpg")))
     for image_path in image_dir:
         images.append(preprocess_clip(Image.open(image_path).convert("RGB")))
 
@@ -72,6 +72,8 @@ if __name__ == "__main__":
           results[query][target] = sim.data
           results[target][query] = sim.data
 
+        pbar.update(1)
+
 
     print("ヒートマップ出力...")
     os.makedirs(args.out_dir, exist_ok=True)
@@ -80,4 +82,7 @@ if __name__ == "__main__":
 
     result_image_path = os.path.join(args.out_dir, "heatmaps.png")
     plt.savefig(result_image_path)
+
+    # ファイル出力
+    np.save(os.path.join(args.out_dir, 'results.npy'), results)
 
